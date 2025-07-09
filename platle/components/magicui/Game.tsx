@@ -16,6 +16,8 @@ interface GameEntry {
     totalPlayers: number
 }
 
+
+
 const Card = ({name, description, imageUrl, releaseDate, genre, developer, rating, totalPlayers}: GameEntry) => {
     return (
         <div className="GameInfoCard">

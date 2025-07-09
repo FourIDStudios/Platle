@@ -1,5 +1,7 @@
 import Game from "@/components/magicui/Game";
+import { number } from "motion";
 import Image from "next/image";
+import axios from "axios";
 
 let testGameData = [
     {
@@ -37,6 +39,57 @@ let testGameData = [
     }
 ]
 testGameData = Array.from({length:3}, () => testGameData).flat();
+
+interface GameQuery {
+    count: number
+    clientId: string
+    authToken: string
+}
+
+
+//Check For Data/Json with todays date
+const IGDB_API_URL = `${process.env.REACT_APP_BASE_URL}/games/?fields=id,name,rating,first_release_date,cover,genres,player_perspectives&limit=100`;
+
+async function fetchIGDBGames() {
+  try {
+    const response = await axios.post(
+      IGDB_API_URL,
+      "",
+      {
+        headers: {
+          "Client-ID": process.env.REACT_APP_CLIENT_ID || "",
+          "Authorization": `Bearer ${process.env.REACT_APP_ACCESS_TOKEN || ""}`,
+          "Accept": "application/json"
+        }
+      }
+    );
+    testGameData = response.data.map((game: any) => ({
+      id: game.id.toString(),
+      name: game.name,
+      description: "", // No description in response, leave blank or fetch separately
+      imageUrl: "", // No image URL in response, would need to resolve cover ID to URL
+      releaseDate: game.first_release_date
+        ? new Date(game.first_release_date * 1000).toISOString().split("T")[0]
+        : "",
+      genre: Array.isArray(game.genres) ? game.genres.join(",") : "",
+      developer: "", // Not present in response
+      rating: game.rating || 0,
+      totalPlayers: 0, // Not present in response
+    }));
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching IGDB games:", error);
+    return null;
+  }
+}
+
+fetchIGDBGames();
+
+// Example usage (uncomment to fetch on server start)
+// fetchIGDBGames();
+
+//If none exist, create a query for random data,
 
 export default function Home() {
   return (
