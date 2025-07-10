@@ -40,12 +40,45 @@ let testGameData = [
 ]
 testGameData = Array.from({length:3}, () => testGameData).flat();
 
+interface Game{
+  id: number,
+  name: string,
+  cover: string, 
+  first_release_date: string,
+  genres: number[],
+  releaseDate: string, 
+  player_perspectives: number[], 
+  rating: number
+}
+
+interface PlayerData {
+  latestGameInfo: GameInfo,
+  streak: number,
+  gameHistory:GameInfo[]
+}
+
+interface GameInfo {
+  date: Date,
+  todaysGame: Game,
+  guesses: number, 
+}
+
 interface GameQuery {
     count: number
     clientId: string
     authToken: string
 }
 
+interface GameSettings {
+  maxGuesses: 5,
+  allowAfterMax: true,
+}
+
+
+const Settings: GameSettings = {
+  maxGuesses: 5,
+  allowAfterMax: true
+}
 
 //Check For Data/Json with todays date
 const IGDB_API_URL = `${process.env.REACT_APP_BASE_URL}/games/?fields=id,name,rating,first_release_date,cover,genres,player_perspectives&limit=100`;
@@ -84,7 +117,7 @@ async function fetchIGDBGames() {
   }
 }
 
-fetchIGDBGames();
+//fetchIGDBGames();
 
 // Example usage (uncomment to fetch on server start)
 // fetchIGDBGames();
