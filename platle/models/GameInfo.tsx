@@ -6,8 +6,7 @@ export default class GameInfo {
         public name: string, 
         public cover: number, 
         public first_release_date: number, 
-        public genres: number[], 
-        public description: string, 
+        public genres: string[], 
         public rating: number, 
         public id?: ObjectId
     ) {}

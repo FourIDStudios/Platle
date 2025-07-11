@@ -8,7 +8,7 @@ interface GameEntry {
     id: string
     name: string
     description: string
-    imageUrl: string
+    cover: string
     releaseDate: string
     genre: string
     developer: string
@@ -18,11 +18,11 @@ interface GameEntry {
 
 
 
-const Card = ({name, description, imageUrl, releaseDate, genre, developer, rating, totalPlayers}: GameEntry) => {
+const Card = ({name, description, cover, releaseDate, genre, developer, rating, totalPlayers}: GameEntry) => {
     return (
         <div className="GameInfoCard">
             <div>
-                <img src={imageUrl} alt={name} className="CardBanner" />
+                <img src={cover} alt={name} className="CardBanner" />
             </div>
             <div>
                 <h2 className="text-xl font-bold text-slate-100 text-center">{name}</h2>
