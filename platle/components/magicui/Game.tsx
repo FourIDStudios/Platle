@@ -3,22 +3,9 @@
 import { cn } from "@/lib/utils";
 import { AnimatedList} from "./animated-list";
 import React from 'react'
+import GameInfo from "@/models/GameInfo";
 
-interface GameEntry {
-    id: string
-    name: string
-    description: string
-    cover: string
-    releaseDate: string
-    genre: string
-    developer: string
-    rating: number
-    totalPlayers: number
-}
-
-
-
-const Card = ({name, description, cover, releaseDate, genre, developer, rating, totalPlayers}: GameEntry) => {
+const Card = ({name, cover, first_release_date, genres, rating,}: GameInfo) => {
     return (
         <div className="GameInfoCard">
             <div>
@@ -26,23 +13,16 @@ const Card = ({name, description, cover, releaseDate, genre, developer, rating, 
             </div>
             <div>
                 <h2 className="text-xl font-bold text-slate-100 text-center">{name}</h2>
-                <p className="text-slate-200 text-center">{description}</p>
                 <div className="mt-2">
                     <div className="InfoGrid text-center">
                         <button className="InfoEntry">
-                            Release Date: {releaseDate}
+                            Release Date: {first_release_date}
                         </button>
                         <button className="InfoEntry">
-                            Genre: {genre}
-                        </button>
-                        <button className="InfoEntry">
-                            Developer: {developer}
+                            genres: {genres}
                         </button>
                         <button className="InfoEntry">
                             Rating: {rating}/10
-                        </button>
-                        <button className="InfoEntry">
-                            Total Players: {totalPlayers}
                         </button>
                     </div>
                 </div>
@@ -51,7 +31,7 @@ const Card = ({name, description, cover, releaseDate, genre, developer, rating, 
     )
 }
 
-const Game = ({GameData}: {GameData: GameEntry[]}) => {
+const Game = ({GameData}: {GameData: GameInfo[]}) => {
   return (
     <div className="GameContainer">
         <AnimatedList>
