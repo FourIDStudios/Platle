@@ -9,7 +9,9 @@ export default class UserData {
         public streak: number = 0,
         public lastPlayed?: Date,
         public History?: {
-            Game: GameInfo,
+            daysGame: GameInfo,
+            Guess: GameInfo,
+            dayCreated: string,
             gameStatus: "Solved"|"Attempted"|"Failed"
         }[], 
         public id?: ObjectId

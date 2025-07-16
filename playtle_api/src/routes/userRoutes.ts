@@ -21,13 +21,16 @@ userRouter.get("/:id", async(req: Request, res:Response) => {
             foundOrNewData = {
                 userId: id,
                 Guesses: 0,
-                streak: 0
+                streak: 0,
+                History: [],
             }
         }else{
             foundOrNewData = {
                 userId: `${userData.id}`,
                 Guesses: userData.Guesses,
-                streak: userData.streak
+                streak: userData.streak,
+                History: userData.History,
+                lastPlayed: userData.lastPlayed,
             }
         }
 
