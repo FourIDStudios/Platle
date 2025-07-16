@@ -30,11 +30,11 @@ export async function fetchGames(){
             genre: Array.isArray(game.genres) ? game.genres.join(",") : "",
             rating: game.rating?.toFixed(0),
         }));
-        console.log("Fetched Games: ",gameData)
+        console.log("[0]: Fetched Games: ",gameData)
         //console.log("Raw Data: ",res.data)
         return gameData;
     }catch(error){
-        console.error("Error fetching IGDB games:", error);
+        console.error("[X]: Error fetching IGDB games:", error);
         return null;
     }
 }

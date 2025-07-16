@@ -31,10 +31,10 @@ export async function connectToDatabase() {
         collections.userdata = db.collection("UserData")
         collections.gameHistory = db.collection("GameHistory")
     }catch(error){
-        console.log(`Failed To Fetch Collections: Err:${error} `)
+        console.log(`[X]: Failed To Fetch Collections: Err:${error} `)
     }
 
-    console.log(`Successfully connected to database: ${db.databaseName} and collections: ${collections.userdata, collections.games, collections.gameHistory}`);
+    console.log(`[0]: Successfully connected to database: ${db.databaseName} and collections: ${collections.userdata, collections.games, collections.gameHistory}`);
 }
 
 export async function UpdateDB()
@@ -46,7 +46,7 @@ export async function UpdateDB()
         await axios.post(`http://localhost:5000/games`, gameData);
             
     }catch(error){
-        console.error("Error fetching IGDB games:", error);
+        console.error("[X]: Error fetching IGDB games:", error);
         return null;
     }
     })

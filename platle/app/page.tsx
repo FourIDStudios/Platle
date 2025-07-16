@@ -1,14 +1,38 @@
 import Game from "@/components/magicui/Game";
-import { number } from "motion";
-import Image from "next/image";
-import axios from "axios";
-import { fetchGames } from "@/services/games.service";
 import GameInfo from "@/models/GameInfo";
-import { connectToDatabase } from "@/services/database.service";
-import { gamesRouter } from "@/routes/GamesController";
+import { ObjectId } from "mongodb";
 
 
-let testGameData:GameInfo[];
+let testGameData:GameInfo[] = [
+  {
+    id: new ObjectId(12314123), name: 'The Dream Team',
+    cover: "https://media.licdn.com/dms/image/v2/D5622AQEGLSacHV-VtQ/feedshare-shrink_2048_1536/B56ZcpRMfTGQAw-/0/1748744067039?e=1755734400&v=beta&t=epH_Oeg7Y6dx0D3qAuIG0d9KAo9SM1jTo1GaFQH25TE",
+    first_release_date: 0,
+    genres: ['Action', 'Adventure', 'Indie'],
+    rating: 0
+  },
+    {
+    id: new ObjectId(12314123), name: 'The Dream Team',
+    cover: "https://media.licdn.com/dms/image/v2/D5622AQEGLSacHV-VtQ/feedshare-shrink_2048_1536/B56ZcpRMfTGQAw-/0/1748744067039?e=1755734400&v=beta&t=epH_Oeg7Y6dx0D3qAuIG0d9KAo9SM1jTo1GaFQH25TE",
+    first_release_date: 0,
+    genres: ['Action', 'Adventure', 'Indie'],
+    rating: 0
+  },
+    {
+    id: new ObjectId(12314123), name: 'The Dream Team',
+    cover: "https://media.licdn.com/dms/image/v2/D5622AQEGLSacHV-VtQ/feedshare-shrink_2048_1536/B56ZcpRMfTGQAw-/0/1748744067039?e=1755734400&v=beta&t=epH_Oeg7Y6dx0D3qAuIG0d9KAo9SM1jTo1GaFQH25TE",
+    first_release_date: 0,
+    genres: ['Action', 'Adventure', 'Indie'],
+    rating: 0
+  },
+    {
+    id: new ObjectId(12314123), name: 'The Dream Team',
+    cover: "https://media.licdn.com/dms/image/v2/D5622AQEGLSacHV-VtQ/feedshare-shrink_2048_1536/B56ZcpRMfTGQAw-/0/1748744067039?e=1755734400&v=beta&t=epH_Oeg7Y6dx0D3qAuIG0d9KAo9SM1jTo1GaFQH25TE",
+    first_release_date: 0,
+    genres: ['Action', 'Adventure', 'Indie'],
+    rating: 0
+  }
+];
 interface Game{
   id: number,
   name: string,
@@ -43,7 +67,7 @@ const Settings: GameSettings = {
 export default function Home() {
   return (
     <div className="Body">
-      
+      <Game GameData={testGameData}></Game>
     </div>
   );
 }
