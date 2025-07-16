@@ -1,6 +1,5 @@
 import express, {Request, Response} from "express";
 import { ObjectId } from "mongodb";
-import { Collection } from "mongodb";
 import GameInfo from "../models/GameInfo";
 import { collections } from "../controllers/DatabaseController";
 
@@ -33,7 +32,7 @@ gamesRouter.get("/", async(_req: Request, res: Response) => {
     }
 })
 //--> Get ("/:id")
-gamesRouter.get("/", async(req: Request, res: Response) => {
+gamesRouter.get("/:id", async(req: Request, res: Response) => {
     const id = req?.params?.id;
     if(id == null){res.status(500).send("Invalid|Missing Id")}
 
@@ -71,13 +70,13 @@ gamesRouter.post("/", async(req: Request, res: Response) => {
         result
             ? res.status(201).send(`Successfully created a new game with id ${result.insertedId}`)
             : res.status(500).send("Failed to create a new game.");
-        } catch (error) {
-            if (error instanceof Error) {
-                res.status(500).send(error.message);
-            } else {
-                res.status(500).send("An unknown error occurred");
-            }
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send("An unknown error occurred");
         }
+    }
 })
 //--> Put ("/:id")
 gamesRouter.put("/:id", async(req: Request, res: Response) => {
@@ -102,7 +101,7 @@ gamesRouter.put("/:id", async(req: Request, res: Response) => {
         }
 })
 //--> Del ("/:id")
-gamesRouter.get("/", async(req: Request, res: Response) => {
+gamesRouter.delete("/:id", async(req: Request, res: Response) => {
     const id = req?.params?.id;
     if(id == null){res.status(500).send("Invalid|Missing Id")}
 

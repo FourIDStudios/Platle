@@ -3,11 +3,14 @@ import * as dotenv from "dotenv"
 import { fetchGames } from "./GamesController";
 import GameInfo from "../models/GameInfo";
 import axios from "axios";
+import DbUpdateJob from "../models/Jobs";
+import UserData from "../models/UserData";
 
 export const collections:{
-    games?: mongoDB.Collection, 
-    userdata?:mongoDB.Collection,
+    games?: mongoDB.Collection<GameInfo>, 
+    userdata?:mongoDB.Collection<UserData>,
     gameHistory?:mongoDB.Collection,
+    jobs?:mongoDB.Collection<DbUpdateJob>,
 } = {}
 let connURI;
 
@@ -27,14 +30,15 @@ export async function connectToDatabase() {
     const db: mongoDB.Db = client.db(process.env.DB_NAME);
     
     try{
-        collections.games = db.collection("GameData");
-        collections.userdata = db.collection("UserData")
+        collections.games = db.collection<GameInfo>("GameData");
+        collections.userdata = db.collection<UserData>("UserData")
         collections.gameHistory = db.collection("GameHistory")
+        collections.jobs = db.collection<DbUpdateJob>("Jobs")
     }catch(error){
         console.log(`[X]: Failed To Fetch Collections: Err:${error} `)
     }
 
-    console.log(`[0]: Successfully connected to database: ${db.databaseName} and collections: ${collections.userdata, collections.games, collections.gameHistory}`);
+    console.log(`[0]: Successfully connected to database: ${db.databaseName} and collections: ${collections.userdata, collections.games, collections.gameHistory, collections.jobs}`);
 }
 
 export async function UpdateDB()
