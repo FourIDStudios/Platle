@@ -2,6 +2,8 @@ import express, {Request, Response} from "express";
 import { ObjectId } from "mongodb";
 import GameInfo from "../models/GameInfo";
 import { collections } from "../controllers/DatabaseController";
+import HistoryInstance from "../models/HistoryInstance";
+import { error } from "console";
 
 
 export const gamesRouter = express.Router();
@@ -31,6 +33,83 @@ gamesRouter.get("/", async(_req: Request, res: Response) => {
         }
     }
 })
+
+gamesRouter.get("/daily", async(_req: Request, res: Response) => {
+    try{
+        const dateOnly = new Date().toISOString().split("T")[0];
+        
+        // Check if today's entry already exists
+        const dailyExists = await collections.gameHistory?.findOne({ dateCreated: dateOnly });
+        if (dailyExists) {
+            // Fetch Game 
+            const foundGame = await collections.games?.findOne({id:dailyExists.id})
+            // Construct and insert the daily entry
+            if(foundGame){
+                const DailyEntry:GameInfo = {
+                    name: foundGame.name, 
+                    cover: foundGame.cover, 
+                    first_release_date: foundGame.first_release_date, 
+                    genres: foundGame.genres, 
+                    rating: foundGame.rating, 
+                    id: foundGame.id
+                };
+                res.status(200).send(DailyEntry)
+            }else{
+                throw error(`Found Game, But Failed To Fetch Entry: ${foundGame}`)
+            }
+        }
+
+        // Get all previously used game IDs
+        const usedGames = await collections.gameHistory?.find({}, { projection: { gameId: 1 } }).toArray();
+        const usedGameIds = usedGames?.map(entry => entry.gameId) ?? [];
+        
+        // Sample a random game that hasn't been used
+        const randomGame = await collections.games?.aggregate([
+            { $match: { id: { $nin: usedGameIds } } },
+            { $sample: { size: 1 } }
+        ]).toArray();
+
+        const dailyRandom = randomGame?.[0];
+
+        if (!dailyRandom) {
+            console.error("[X]: No unused games available for daily entry.");
+            return;
+        }
+
+        // Construct and insert the daily entry
+        const DailyEntry = {
+            name: dailyRandom.name, 
+            cover: dailyRandom.cover, 
+            first_release_date: dailyRandom.first_release_date, 
+            genres: dailyRandom.genres, 
+            rating: dailyRandom.rating, 
+            id: dailyRandom.id
+        };
+
+        const HistoryEntry = {
+            gameId: dailyRandom.id,
+            dateCreated: dateOnly,
+        }
+
+        const result = await collections.gameHistory?.insertOne(HistoryEntry);
+
+        if (result?.acknowledged) {
+            console.log("[O]: Daily game entry created:", DailyEntry);
+            res.status(200).send(DailyEntry);
+        } else {
+            console.error("[X]: Failed to insert daily game entry.");
+            res.status(500).send("[X]: Failed to insert daily game entry.");
+        }
+
+    }catch(error){
+        if (error instanceof Error) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send("An unknown error occurred");
+        }
+    }
+})
+
 //--> Get ("/:id")
 gamesRouter.get("/:id", async(req: Request, res: Response) => {
     const id = req?.params?.id;

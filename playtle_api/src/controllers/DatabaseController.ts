@@ -5,11 +5,12 @@ import GameInfo from "../models/GameInfo";
 import axios from "axios";
 import DbUpdateJob from "../models/Jobs";
 import UserData from "../models/UserData";
+import HistoryInstance from "../models/HistoryInstance";
 
 export const collections:{
     games?: mongoDB.Collection<GameInfo>, 
     userdata?:mongoDB.Collection<UserData>,
-    gameHistory?:mongoDB.Collection,
+    gameHistory?:mongoDB.Collection<HistoryInstance>,
     jobs?:mongoDB.Collection<DbUpdateJob>,
 } = {}
 let connURI;
