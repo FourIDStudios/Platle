@@ -15,7 +15,7 @@ const Settings: GameSettings = {
 export default function Home() {
   return (
     <div className="Body">
-      <Game GameData={testGameData}></Game>
+
     </div>
   );
 }
