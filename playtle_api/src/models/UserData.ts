@@ -4,12 +4,14 @@ import GameInfo from "./GameInfo";
 
 export default class UserData {
     constructor(
-        public History: {
+        public userId: string,
+        public Guesses: number = 0,
+        public streak: number = 0,
+        public lastPlayed?: Date,
+        public History?: {
             Game: GameInfo,
             gameStatus: "Solved"|"Attempted"|"Failed"
         }[], 
-        public Guesses: number,
-        public streak: number,
-        public lastPlayed: Date,
+        public id?: ObjectId
     ) {}
 }
