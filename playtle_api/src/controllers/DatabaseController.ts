@@ -44,16 +44,16 @@ export async function connectToDatabase() {
 
 export async function UpdateDB()
 {
-    let gameData:GameInfo[] = await fetchGames()
+    let gameData = await fetchGames()
 
-    gameData.forEach(async (game) => {
-    try{
-        await axios.post(`http://localhost:5000/games`, gameData);
+    // gameData.forEach(async (game) => {
+    // try{
+    //     await axios.post(`http://localhost:5000/games`, gameData);
             
-    }catch(error){
-        console.error("[X]: Error fetching IGDB games:", error);
-        return null;
-    }
-    })
+    // }catch(error){
+    //     console.error("[X]: Error fetching IGDB games:", error);
+    //     return null;
+    // }
+    // })
 }
 //#endregion

@@ -1,4 +1,5 @@
 import axios from "axios";
+import GameInfo from "../models/GameInfo";
 
 async function fetchAccessToken(): Promise<string | null> {
     try {
@@ -17,6 +18,19 @@ async function fetchAccessToken(): Promise<string | null> {
     }
 }
 
+//Fetch From popularity API
+/*
+
+fields name, cover.image_id, first_release_date, genres, involved_companies, platforms, total_rating;
+where name != nill & cover!= null & first_release_date != null & genres != null & involved_companies != null & platforms != null & total_rating > 0;
+limit 500;
+
+OLD
+fields name, cover.image_id, first_release_date, genres, rating, player_perspectives, screenshots;
+where name != null & cover != null & first_release_date != null & genres != null & genres.name != null & summary != null & rating != null & id != null & rating > 25 & screenshots != null;
+limit 500;
+*/
+
 export async function fetchGames(){
     console.log("[O]: Fetching Access Token... ")
     const Access_token = 'f6dmznanwy7dbcaq17j2c1szv3dm4c';
@@ -24,8 +38,8 @@ export async function fetchGames(){
     const IGDB_API_URL = `${process.env.IGDB_API_URL}/games`;
     let gameData;
     let queryString = `
-        fields name, cover.image_id, first_release_date, genres, rating, player_perspectives, screenshots;
-        where name != null & cover != null & first_release_date != null & genres != null & genres.name != null & summary != null & rating != null & id != null & rating > 25 & screenshots != null;
+        fields name, cover.image_id, first_release_date, genres, involved_companies, platforms, rating;
+        where name != null & cover!= null & first_release_date != null & genres != null & involved_companies != null & platforms != null & rating > 0;
         limit 500;
     `
     try{
@@ -47,10 +61,13 @@ export async function fetchGames(){
             first_release_date: game.first_release_date
                 ? new Date(game.first_release_date * 1000).toISOString().split("T")[0]
                 : "",
-            genre: Array.isArray(game.genres) ? game.genres.join(",") : "",
-            rating: game.rating?.toFixed(0),
+            platforms: game.platforms,
+            genres: game.genres,
+            involved_companies: game.involved_companies,
+            isIndie: game.genres?.includes(32),
+            total_rating: game.rating?.toFixed(0),
         }));
-        console.log("[0]: Fetched Games: ",gameData)
+        //console.log("[0]: Fetched Games: ",gameData)
         //console.log("Raw Data: ",res.data)
         return gameData;
     }catch(error){
@@ -58,3 +75,4 @@ export async function fetchGames(){
         return null;
     }
 }
+

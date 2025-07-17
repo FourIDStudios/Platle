@@ -16,12 +16,15 @@ gamesRouter.get("/", async(_req: Request, res: Response) => {
         const docs = await collections.games?.find({}).toArray();
         const games: GameInfo[] = docs
             ? docs.map(doc => ({
-                id: doc._id,
-                name: doc.name,
-                cover: doc.cover,
-                first_release_date: doc.first_release_date,
-                genres: doc.genres,
-                rating: doc.rating, 
+                name: doc.name, 
+                cover: doc.cover, 
+                first_release_date: doc.first_release_date, 
+                platforms: doc.platforms, 
+                genres: doc.genres, 
+                involved_companies: doc.involved_companies,
+                total_rating: doc.total_rating,
+                isIndie: doc.isIndie,
+                id: doc.id
             }))
             : [];
         res.status(200).send(games);
@@ -49,8 +52,11 @@ gamesRouter.get("/daily", async(_req: Request, res: Response) => {
                     name: foundGame.name, 
                     cover: foundGame.cover, 
                     first_release_date: foundGame.first_release_date, 
+                    platforms: foundGame.platforms, 
                     genres: foundGame.genres, 
-                    rating: foundGame.rating, 
+                    involved_companies: foundGame.involved_companies,
+                    total_rating: foundGame.total_rating,
+                    isIndie: foundGame.isIndie,
                     id: foundGame.id
                 };
                 res.status(200).send(DailyEntry)
@@ -81,8 +87,11 @@ gamesRouter.get("/daily", async(_req: Request, res: Response) => {
             name: dailyRandom.name, 
             cover: dailyRandom.cover, 
             first_release_date: dailyRandom.first_release_date, 
+            platforms: dailyRandom.platforms, 
             genres: dailyRandom.genres, 
-            rating: dailyRandom.rating, 
+            involved_companies: dailyRandom.involved_companies,
+            total_rating: dailyRandom.total_rating,
+            isIndie: dailyRandom.isIndie,
             id: dailyRandom.id
         };
 
@@ -123,12 +132,15 @@ gamesRouter.get("/:id", async(req: Request, res: Response) => {
             return;
         }
         const game: GameInfo = {
-            id: doc._id,
-            name: doc.name,
-            cover: doc.cover,
-            first_release_date: doc.first_release_date,
-            genres: doc.genres,
-            rating: doc.rating,
+            name: doc.name, 
+            cover: doc.cover, 
+            first_release_date: doc.first_release_date, 
+            platforms: doc.platforms, 
+            genres: doc.genres, 
+            involved_companies: doc.involved_companies,
+            total_rating: doc.total_rating,
+            isIndie: doc.isIndie,
+            id: doc.id
         };
 
         res.status(200).send(game);
