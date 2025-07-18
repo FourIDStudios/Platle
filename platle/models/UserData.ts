@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import GameInfo from "./GameInfo";
 
+
 export default class UserData {
     constructor(
         public userId: string,

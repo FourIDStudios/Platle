@@ -9,10 +9,11 @@ userRouter.use(express.json());
 
 //Endpoints
 
-//--> Get ("/:id")
+//--> Get ("/")
 userRouter.get("/:id", async(req: Request, res:Response) => {
-    const id:string = req?.params?.id;
-    if(id == null){res.status(500).send("Invalid|Missing Id")}
+    const id:string = req?.params?.id as string;
+    console.log(`Get With Id: ${req.params?.id}`)
+    if(id == null){res.status(500).send("Invalid|Missing Id"); return;}
 
     let foundOrNewData:UserData;
     try {
@@ -38,17 +39,22 @@ userRouter.get("/:id", async(req: Request, res:Response) => {
     }catch(error){
         if (error instanceof Error) {
             res.status(500).send(error.message);
+            return;
         } else {
             res.status(500).send("An unknown error occurred");
+            return;
         }
     }
 })
 
 
-//--> Put ("/:id")
+//--> Put ("/")
 userRouter.put("/:id", async(req: Request, res:Response) => {
     const id:string = req?.params?.id;
-    if(id == null){res.status(500).send("Invalid|Missing Id")}
+    if(id == null){
+        res.status(500).send("Invalid|Missing Id")
+        return;
+    }
 
     try {
         let newuserData = req.body as UserData;
@@ -59,11 +65,14 @@ userRouter.put("/:id", async(req: Request, res:Response) => {
         result
             ?res.status(200).send(`Successfully updated user data`)
             :res.status(304).send(`Failed to update profile id:${id}`)
+        return;
     }catch(error){
         if (error instanceof Error) {
             res.status(400).send(error.message);
+            return;
         } else {
             res.status(400).send("An unknown error occurred");
+            return;
         }
     }
 })

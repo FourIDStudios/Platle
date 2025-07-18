@@ -32,13 +32,13 @@ export async function UpdateDatabase() {
                 //Fetch Games
                 console.log(`[O..${++logIndex}]: Executing Game Fetch...`)
                 let Games:GameInfo[] = await fetchGames();
-
+                let skipped = 0
                 //Update Database
                 Games.forEach(async game => {
                     //Check For Existing Element
                     const doesExist = await collections.games?.findOne({name: game.name});
                     if(doesExist) {
-                        console.log(`[O..${++logIndex}]: Skipping duplicate game entry: ${game.name}...`)
+                        skipped++;
                         return;
                     }
 
@@ -58,6 +58,10 @@ export async function UpdateDatabase() {
                         }
                     }
                 });
+
+                if(skipped > 0){
+                    console.log(`[O..${++logIndex}]: Skipped ${skipped} duplicate game entrie(s)`)
+                }
             }catch(error){
                 console.log(`[O..${++logIndex}]: Error running Job: ${job.name}`);
                 console.log(`[O..${++logIndex}]: Error caught while updating database, Error: ${error}`);
