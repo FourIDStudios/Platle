@@ -11,7 +11,7 @@ export default class GameInfo {
         public involved_companies: number[],
         public total_rating: number, 
         public isIndie: boolean,
-        public id?: ObjectId
+        public id?: string
     ) {}
 }
 

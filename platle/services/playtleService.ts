@@ -1,3 +1,4 @@
+import GameInfo from "@/models/GameInfo";
 import UserData from "@/models/UserData";
 import axios from "axios";
 
@@ -24,4 +25,21 @@ export async function fetchUser(userId:string){
     }
 }
 
+
+export async function fetchDaily(){
+    const dailyEndpoint = `http://localhost:4000/games/daily`;
+    try{
+        const res = await axios.get(dailyEndpoint,{
+            headers:{
+              "Access-Control-Allow-Origin": true,
+            },
+        });
+        const gameData:GameInfo = res.data;
+        console.log("[O]: Fetched Daily Game:", gameData);
+        return gameData;
+    }catch(error){
+        console.error("[X]: Error fetching Daily Game:", error);
+        return null;
+    }
+}
 //#endregion

@@ -5,7 +5,7 @@ import { AnimatedList} from "./animated-list";
 import React from 'react'
 import GameInfo from "@/models/GameInfo";
 
-const Card = ({name, cover, first_release_date, genres, rating,}: GameInfo) => {
+const Card = ({name, cover, first_release_date, genres, total_rating,}: GameInfo) => {
     return (
         <div className="GameInfoCard">
             <div>
@@ -22,7 +22,7 @@ const Card = ({name, cover, first_release_date, genres, rating,}: GameInfo) => {
                             genres: {genres}
                         </button>
                         <button className="InfoEntry">
-                            Rating: {rating}/10
+                            Rating: {total_rating}
                         </button>
                     </div>
                 </div>

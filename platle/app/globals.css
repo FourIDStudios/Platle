@@ -2,7 +2,11 @@
 @import "tw-animate-css";
 
 :root{
-  background-color: #1e293b;
+  font-family: 'Courier New', Courier, monospace;
+  background: #5e5a7d;
+  background: linear-gradient(161deg, rgba(94, 90, 125, 1) 0%, rgba(18, 18, 18, 1) 100%);
+  background-attachment: fixed;
+  color: aliceblue;
 }
 
 .GameContainer{
@@ -54,4 +58,31 @@
   padding: .5rem;
 
   @apply bg-slate-900 text-slate-200 hover:bg-slate-500 transition-colors duration-300;
+}
+
+.Header {
+    background-color: #3b394c;
+    padding: .25rem;
+    display: flex;
+
+    h1 {
+      font-weight: bold;
+      font-size: larger;
+    }
+
+    .Title {
+      padding-left: 16px;
+      font-variant-caps: all-petite-caps;
+      text-align: left;
+      font-weight: bold;
+      flex-grow: 1;
+      font-size: xx-large;
+      text-align: center;
+      color: lightslategray;
+    }
+
+    .UserName{
+      align-self: self-end;
+      font-size: medium;
+    }
 }

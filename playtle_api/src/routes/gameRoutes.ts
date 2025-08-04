@@ -45,7 +45,7 @@ gamesRouter.get("/daily", async(_req: Request, res: Response) => {
         const dailyExists = await collections.gameHistory?.findOne({ dateCreated: dateOnly });
         if (dailyExists) {
             // Fetch Game 
-            const foundGame = await collections.games?.findOne({id:dailyExists.id})
+            const foundGame = await collections.games?.findOne({id: dailyExists.gameId})
             // Construct and insert the daily entry
             if(foundGame){
                 const DailyEntry:GameInfo = {
@@ -60,8 +60,10 @@ gamesRouter.get("/daily", async(_req: Request, res: Response) => {
                     id: foundGame.id
                 };
                 res.status(200).send(DailyEntry)
+                return;
             }else{
-                throw error(`Found Game, But Failed To Fetch Entry: ${foundGame}`)
+                res.status(500).send("Failed to fetch today's game entry.");
+                return;
             }
         }
 
@@ -105,9 +107,11 @@ gamesRouter.get("/daily", async(_req: Request, res: Response) => {
         if (result?.acknowledged) {
             console.log("[O]: Daily game entry created:", DailyEntry);
             res.status(200).send(DailyEntry);
+            return;
         } else {
             console.error("[X]: Failed to insert daily game entry.");
             res.status(500).send("[X]: Failed to insert daily game entry.");
+            return;
         }
 
     }catch(error){

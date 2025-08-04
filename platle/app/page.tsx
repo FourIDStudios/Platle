@@ -2,10 +2,12 @@
 'use client'
 
 import UserData from "@/models/UserData";
-import { fetchUser } from "@/services/playtleService";
+import { fetchDaily, fetchUser } from "@/services/playtleService";
 import { randomBytes, randomUUID } from "crypto";
 import { useEffect, useState } from "react";
-
+import GameInfo from "@/models/GameInfo";
+import Header from "@/components/header/header";
+import Game from "@/components/magicui/Game";
 
 interface GameSettings {
   maxGuesses: 5,
@@ -20,6 +22,7 @@ const playtle_data_key = "playtle_user_id"
 
 export default function Home() {
   const [user, setUser] = useState<UserData | null>(null);
+  const [dailyGame, setDailyGame] = useState<GameInfo | null>(null);
 
   //#region User Auth
   useEffect(() => {
@@ -41,6 +44,16 @@ export default function Home() {
       }
     };
     initializeUser();
+
+    const initializeDailyGame = async () => {
+      try {
+        const gameData = await fetchDaily();
+        setDailyGame(gameData);
+      } catch (error) {
+        console.error("Error fetching daily game:", error);
+      }
+    }
+    initializeDailyGame();
   },[]);
   //#endregion
 
@@ -48,7 +61,10 @@ export default function Home() {
   //#region  Page
   return (
     <div className="Body">
-        <div>User ID: {user?.userId || "Loading..."}</div>
+      <Header Title="Platle" UserName={user?.userId || "Loading..."}></Header>
+        <Game GameData={dailyGame ? [dailyGame] : []}>
+          
+        </Game>
     </div>
   );
   //#endregion
