@@ -42,4 +42,21 @@ export async function fetchDaily(){
         return null;
     }
 }
+
+export async function fetchGames(){
+    const gamesEndpoint = `http://localhost:4000/games`;
+    try{
+        const res = await axios.get(gamesEndpoint,{
+            headers:{
+              "Access-Control-Allow-Origin": true,
+            },
+        });
+        const gamesData:GameInfo[] = res.data;
+        console.log("[O]: Fetched Games:", gamesData);
+        return gamesData;
+    }catch(error){
+        console.error("[X]: Error fetching Games:", error);
+        return null;
+    }
+}
 //#endregion
