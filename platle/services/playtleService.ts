@@ -34,9 +34,8 @@ export async function fetchDaily(){
               "Access-Control-Allow-Origin": true,
             },
         });
-        const gameData:GameInfo = res.data;
-        console.log("[O]: Fetched Daily Game:", gameData);
-        return gameData;
+        console.log("[O]: Fetched Daily Game:", res.data);
+        return {GameInfo: res.data.GameInfo, DailyId: res.data.DailyId};
     }catch(error){
         console.error("[X]: Error fetching Daily Game:", error);
         return null;
@@ -56,6 +55,27 @@ export async function fetchGames(){
         return gamesData;
     }catch(error){
         console.error("[X]: Error fetching Games:", error);
+        return null;
+    }
+}
+
+export async function makeGuess(userId: string, dailyGame: {GameInfo: GameInfo, DailyId: String}, guess: GameInfo) {
+    const guessEndpoint = `http://localhost:4000/users/${userId}/games/${dailyGame.DailyId}/guess`;
+
+    try {
+        const res = await axios.post(guessEndpoint, {
+            guess: guess,
+            hintUsed: false,
+            gameStatus: guess.id === dailyGame.GameInfo.id ? "Solved" : "Attempted"
+         }, {
+            headers: {
+                "Access-Control-Allow-Origin": true,
+            },
+        });
+        console.log("[O]: Made a Guess:", res.data);
+        return res.data;
+    } catch (error) {
+        console.error("[X]: Error making a Guess:", error);
         return null;
     }
 }

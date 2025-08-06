@@ -59,7 +59,7 @@ gamesRouter.get("/daily", async(_req: Request, res: Response) => {
                     isIndie: foundGame.isIndie,
                     id: foundGame.id
                 };
-                res.status(200).send(DailyEntry)
+                res.status(200).send({GameInfo:DailyEntry, DailyId: dailyExists._id.toHexString()})
                 return;
             }else{
                 res.status(500).send("Failed to fetch today's game entry.");

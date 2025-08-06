@@ -1,10 +1,13 @@
 import React, { useRef, useState } from 'react'
 import { AnimatedList } from '../magicui/animated-list';
 import { AnimatedSearchList } from '../magicui/animated-search-list';
+import { makeGuess } from '@/services/playtleService';
 
-const SearchBox = ({ games, maxResults }: { games: string[], maxResults?: number }) => {
+const SearchBox = ({ games, maxResults, OnSelect }: { games: string[], maxResults?: number, OnSelect: (value: string) => void }) => {
   const [filteredGames, setFilteredGames] = useState<string[]>([]);
   const [query, setQuery] = useState<string>("");
+
+
 // Debounce logic to improve performance
 const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -32,6 +35,7 @@ const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   const onSelect = (value: string) => {
     setQuery(value);
     setFilteredGames([]);
+    OnSelect(value);
   };
 
   return (

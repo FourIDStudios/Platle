@@ -1,6 +1,8 @@
 import express, {Request, Response} from "express";
 import { collections } from "../controllers/DatabaseController";
 import UserData from "../models/UserData";
+import GameInfo from "../models/GameInfo";
+import { ObjectId } from "mongodb";
 
 
 
@@ -24,17 +26,23 @@ userRouter.get("/:id", async(req: Request, res:Response) => {
                 Guesses: 0,
                 streak: 0,
                 History: [],
+                lastPlayed: new Date(),
             }
+        
+            //Create New UserData
+            await collections.userdata?.insertOne(foundOrNewData);
+            console.log("[O]: Created New UserData:", foundOrNewData);
         }else{
             foundOrNewData = {
-                userId: `${userData.id}`,
+                userId: userData.userId,
                 Guesses: userData.Guesses,
                 streak: userData.streak,
                 History: userData.History,
                 lastPlayed: userData.lastPlayed,
             }
+            console.log("[O]: Fetched UserData:", foundOrNewData);
         }
-
+        
         res.status(200).send(foundOrNewData);
     }catch(error){
         if (error instanceof Error) {
@@ -76,3 +84,48 @@ userRouter.put("/:id", async(req: Request, res:Response) => {
         }
     }
 })
+
+//--> Post ("/:id/games/:dailyId/guess")
+userRouter.post("/:id/games/:dailyId/guess", async(req: Request, res: Response) => {
+    const userId = req?.params?.id;
+    const dailyId = req?.params?.dailyId;
+
+    if(userId == null || dailyId == null){
+        res.status(500).send("Invalid|Missing Id")
+        return;
+    }
+
+    let userData= await collections.userdata?.findOne({userId:userId});
+    if(!userData){ res.status(404).send("User not found"); return;}
+    if(!userData.History){userData.History = [];}
+
+    const newGuess = req.body.guess as GameInfo;
+    const historyEntry = userData.History.find(entry => entry.dailyId.toHexString() === dailyId);
+    
+    if(historyEntry){
+        //Push New Guess & Update Existing Entry
+        historyEntry.guesses.push(newGuess);
+        historyEntry.hintUsed = req.body.hintUsed || false;
+        historyEntry.gameStatus = req.body.gameStatus || "Attempted";
+    }else{
+        //Create New Entry, With Guess Included
+        userData.History.push({
+            dailyId: new ObjectId(dailyId),
+            guesses: [newGuess],
+            hintUsed: req.body.hintUsed || false,
+            gameStatus: req.body.gameStatus || "Attempted",
+            dayCreated: new Date().toISOString(),
+        });
+    }
+    userData.lastPlayed = new Date();
+    userData.Guesses += 1;
+    if(req.body.gameStatus === "Solved"){
+        userData.streak += 1;
+    }else{
+        userData.streak = 0;
+    }
+    //Update UserData in Database
+    await collections.userdata?.updateOne({userId: userId}, {$set: userData});
+    res.status(200).send("Guess recorded successfully");
+    return;
+});
