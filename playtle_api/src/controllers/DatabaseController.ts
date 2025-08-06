@@ -46,14 +46,13 @@ export async function UpdateDB()
 {
     let gameData = await fetchGames()
 
-    // gameData.forEach(async (game) => {
-    // try{
-    //     await axios.post(`http://localhost:5000/games`, gameData);
-            
-    // }catch(error){
-    //     console.error("[X]: Error fetching IGDB games:", error);
-    //     return null;
-    // }
-    // })
+    gameData.forEach(async (game:GameInfo) => {
+        try{
+            await axios.post(`http://localhost:5000/games`, game);
+        }catch(error){
+            console.error("[X]: Error fetching IGDB games:", error);
+            return null;
+        }
+    })
 }
 //#endregion

@@ -1,5 +1,6 @@
 import axios from "axios";
 import GameInfo from "../models/GameInfo";
+import { GameCategoryEnum } from "igdb-api-types";
 
 async function fetchAccessToken(): Promise<string | null> {
     try {
@@ -31,16 +32,19 @@ where name != null & cover != null & first_release_date != null & genres != null
 limit 500;
 */
 
-export async function fetchGames(){
+async function fetchGamesOffset(offset:number): Promise<GameInfo[] | null> {
     console.log("[O]: Fetching Access Token... ")
     const Access_token = 'f6dmznanwy7dbcaq17j2c1szv3dm4c';
 
     const IGDB_API_URL = `${process.env.IGDB_API_URL}/games`;
+    
     let gameData;
+
+    
     let queryString = `
-        fields name, cover.image_id, first_release_date, genres, involved_companies, platforms, rating;
-        where name != null & cover!= null & first_release_date != null & genres != null & involved_companies != null & platforms != null & rating > 0;
-        limit 500;
+        fields name, cover.image_id, first_release_date, genres, involved_companies, platforms, rating, game_type, total_rating_count, total_rating;
+        where name != null & cover!= null & first_release_date != null & genres != null & involved_companies != null & platforms != null & rating > 0 & total_rating_count != null & total_rating_count > 10 & game_type = 0;
+        limit 500; offset ${offset};
     `
     try{
         const res = await axios.post(
@@ -74,5 +78,27 @@ export async function fetchGames(){
         console.error("[X]: Error fetching IGDB games:", error);
         return null;
     }
+}
+
+export async function fetchGames(){
+    const games = [];
+    let offset = 0;
+    let hasMore = true;
+    let totalAllowedFetches = 5;
+
+    while(hasMore && totalAllowedFetches > 0){
+        const fetchedGames = await fetchGamesOffset(offset);
+        if(fetchedGames && fetchedGames.length > 0){
+            games.push(...fetchedGames);
+            totalAllowedFetches--;
+            offset += fetchedGames.length;
+            console.log(`[O]: Fetched ${fetchedGames.length} games, Total: ${games.length}, Offset: ${offset}`);
+        }else{
+            hasMore = false;
+        }
+    }
+    console.log("[O]: Fetched Total Games: ", games.length);
+
+    return games;
 }
 

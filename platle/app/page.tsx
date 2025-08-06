@@ -94,7 +94,7 @@ export default function Home() {
       <Header Title="Platle" UserName={user?.userId || "Loading..."}></Header>
       <SearchBox games={games?.map(game => game.name) || [] }
        OnSelect={handleGuess} />
-        <Game UserData={user} todaysGame={dailyGame?.GameInfo || null} gameId={dailyGame?.DailyId}></Game>
+        <Game UserData={user} todaysGame={dailyGame?.GameInfo || null} gameId={dailyGame?.DailyId || null}></Game>
     </div>
   );
   //#endregion

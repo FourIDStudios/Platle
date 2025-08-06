@@ -33,7 +33,7 @@ const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 };
 
   const onSelect = (value: string) => {
-    setQuery(value);
+    setQuery('');
     setFilteredGames([]);
     OnSelect(value);
   };

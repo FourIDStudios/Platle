@@ -49,7 +49,7 @@ const Game = ({UserData,todaysGame, gameId}: {UserData: UserData|null, todaysGam
         return (
         <div className="GameContainer">
             <AnimatedList>
-                {UserData.History.find(history => history.dailyId === gameId)?.guesses.map((currentGuess, index) =>(
+                {UserData.History.find(history => (history.dailyId as unknown as string) === gameId)?.guesses.map((currentGuess, index) =>(
                     <Card key={index} CurrentGuess={currentGuess} todaysGame={todaysGame as GameInfo} />
                 ))}
             </AnimatedList>
