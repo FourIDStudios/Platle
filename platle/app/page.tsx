@@ -3,12 +3,12 @@
 
 import UserData from "@/models/UserData";
 import { fetchDaily, fetchGames, fetchUser, makeGuess } from "@/services/playtleService";
-import { randomBytes, randomUUID } from "crypto";
 import { useEffect, useState } from "react";
 import GameInfo from "@/models/GameInfo";
 import Header from "@/components/header/header";
-import Game from "@/components/magicui/Game";
 import SearchBox from "@/components/autocomplete/searchbox";
+import {Game, Card} from "@/components/magicui/Game";
+import { Gamepad } from "lucide-react";
 
 interface GameSettings {
   maxGuesses: 5,
@@ -26,6 +26,7 @@ export default function Home() {
   const [dailyGame, setDailyGame] = useState<{GameInfo:GameInfo, DailyId:string} | null>(null);
   const [games, setGames] = useState<GameInfo[] | null>([]);
 
+  
   //#region User Auth
   useEffect(() => {
     const initializeUser = async () => {
@@ -47,16 +48,6 @@ export default function Home() {
     };
     initializeUser();
 
-    const initializeDailyGame = async () => {
-      try {
-        const gameData = await fetchDaily();
-        setDailyGame(gameData);
-      } catch (error) {
-        console.error("Error fetching daily game:", error);
-      }
-    }
-    initializeDailyGame();
-
     const initializeGames = async () => {
       try {
         const gamesData = await fetchGames();
@@ -66,6 +57,16 @@ export default function Home() {
       }
     };
     initializeGames();
+
+    const initializeDailyGame = async () => {
+      try {
+        const gameData = await fetchDaily();
+        setDailyGame(gameData);
+      } catch (error) {
+        console.error("Error fetching daily game:", error);
+      }
+    }
+    initializeDailyGame();
   }, []);
   //#endregion
 
@@ -94,6 +95,7 @@ export default function Home() {
       <Header Title="Platle" UserName={user?.userId || "Loading..."}></Header>
       <SearchBox games={games?.map(game => game.name) || [] }
        OnSelect={handleGuess} />
+        <Card CurrentGuess={null} todaysGame={dailyGame?.GameInfo as GameInfo} />
         <Game UserData={user} todaysGame={dailyGame?.GameInfo || null} gameId={dailyGame?.DailyId || null}></Game>
     </div>
   );

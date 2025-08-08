@@ -19,7 +19,6 @@ connectToDatabase()
         console.log(`[O] Playtle Server Is Online at http://localhost:${process.env.SERVER_PORT} :D`)
     });
     cron.schedule('0 0 * * *', UpdateDatabase)
-    UpdateDatabase();
 })
 .catch((error: Error) => {
     console.error(`[X] Database connection failed :(| Er:${error}`)
