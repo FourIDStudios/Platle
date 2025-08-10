@@ -8,6 +8,10 @@ import UserData from "@/models/UserData";
 import { Gamepad, RefreshCwOffIcon, User } from "lucide-react";
 import { ObjectId } from "mongodb";
 import { color, Color } from "motion";
+import { GenreEnum } from "@/models/Enums/GenreEnums";
+import { PlatformEnum } from "@/models/Enums/PlatformEnum";
+import { renderPlatform } from "@/services/platformIconService";
+import { GenreIconMap } from "@/models/Enums/GenreEnumIconMap";
 
 type CardProps = {
     CurrentGuess: GameInfo | null;
@@ -29,6 +33,23 @@ interface MatchValueProps {
     Fields: FieldData[]; // An array of FieldData objects
 }
 
+export function getGenreNames(ids: number[]): string[] {
+  return ids.map(id => GenreEnum[id]);
+}
+
+export function getPlatformNames(ids: number[]): string[] {
+  return ids.map(id => PlatformEnum[id]);
+}
+
+function getYear(dateStr: string | number): number {
+  // If your field might already be a number, handle both
+  if (typeof dateStr === "number") {
+    // If it's a UNIX timestamp: new Date(dateStr * 1000).getFullYear();
+    return dateStr; 
+  }
+  return parseInt(dateStr.substring(0, 4), 10);
+}
+
 const getMatches = (Props:MatchesProps):MatchValueProps => {
     let game = Props.game
     let guess = Props.guess
@@ -37,35 +58,39 @@ const getMatches = (Props:MatchesProps):MatchValueProps => {
     }
 
     //Check Release Date Range (within 5 years)
-    if(guess.first_release_date+5 <= game.first_release_date && guess.first_release_date-5 >= game.first_release_date){
-        matches.Fields.push({name: "Release Date", color: 'close',value: guess.first_release_date});
-    }else if(guess.first_release_date === game.first_release_date){
-        matches.Fields.push({name: "Release Date", color: 'correct',value: guess.first_release_date });
+    const guessYear = getYear(guess.first_release_date);
+    const gameYear = getYear(game.first_release_date);
+    if(guessYear+5 <= gameYear && guessYear-5 >= gameYear){
+        matches.Fields.push({name: "Release Date", color: 'close',value: guessYear});
+    }else if(guessYear === gameYear){
+        matches.Fields.push({name: "Release Date", color: 'correct',value: guessYear });
     }else{
-        matches.Fields.push({name: "Release Date", color: 'wrong',value: guess.first_release_date });
+        matches.Fields.push({name: "Release Date", color: 'wrong',value: guessYear });
     }
 
     //Check Genres
     if(guess.genres.length > 0 && game.genres.length > 0){
         const genreMatches = guess.genres.filter(genre => game.genres.includes(genre));
+        const genreNames = guess.genres
         if(genreMatches.length > 0 && genreMatches.length === game.genres.length){
-            matches.Fields.push({name: "Genres", color: 'correct', value:guess.genres});
+            matches.Fields.push({name: "Genres", color: 'correct', value:genreNames});
         }else if(genreMatches.length > 0){
-            matches.Fields.push({name: "Genres", color: 'close', value:guess.genres });
+            matches.Fields.push({name: "Genres", color: 'close', value:genreNames});
         }else{
-            matches.Fields.push({name: "Genres", color: 'wrong', value:guess.genres });
+            matches.Fields.push({name: "Genres", color: 'wrong', value:genreNames});
         }
     }
 
     //Check Platforms
     if(guess.platforms.length > 0 && game.platforms.length > 0){
         const platformMatches = guess.platforms.filter(platform => game.platforms.includes(platform));
+        const platformNames = guess.platforms;
         if(platformMatches.length > 0 && platformMatches.length === game.platforms.length){
-            matches.Fields.push({name: "platforms", color: 'correct', value:guess.platforms });
+            matches.Fields.push({name: "platforms", color: 'correct', value:platformNames });
         }else if(platformMatches.length > 0){
-            matches.Fields.push({name: "platforms", color: 'close', value:guess.platforms });
+            matches.Fields.push({name: "platforms", color: 'close', value:platformNames});
         }else{
-            matches.Fields.push({name: "platforms", color: 'wrong', value:guess.platforms });
+            matches.Fields.push({name: "platforms", color: 'wrong', value:platformNames});
         }
     }
 
@@ -87,14 +112,57 @@ const getMatches = (Props:MatchesProps):MatchValueProps => {
 };
 
 const MatchModal: React.FC<FieldData> = (Field) => {
-    return(
-        <button className={'InfoEntry '+Field.color}>
-        <span>
-            {Field.name}: {Field.value}{" "}
-        </span>
-        </button>
-    );
-}
+  return (
+    <div>
+      <span className="font-semibold">{Field.name}</span>
+      <div className={"InfoEntry " + Field.color + " mb-2"}>
+        {Array.isArray(Field.value) ? (
+          <div className="InfoEntryContent flex flex-wrap gap-2 justify-center">
+            
+            {/* Platforms → icons */}
+            {Field.name.toLowerCase() === "platforms" &&
+              Field.value.map((platformId: number, idx: number) => (
+                <div key={idx} className="flex items-center gap-1">
+                  {renderPlatform(platformId)}
+                </div>
+              ))}
+
+            {/* Genres → icons + label */}
+            {Field.name.toLowerCase() === "genres" &&
+              Field.value.map((genreId: number, idx: number) => (
+                <div
+                  key={idx}
+                  className={"flex flex-col items-center gap-1 px-2 py-1 rounded-lg text-sm "}
+                  title={GenreEnum[genreId]} // tooltip on hover
+                >
+                  {GenreIconMap[genreId] ?? <span>{GenreEnum[genreId]}</span>}
+                </div>
+              ))}
+
+            {/* Generic array → colored chips */}
+            {Field.name.toLowerCase() !== "platforms" &&
+              Field.name.toLowerCase() !== "genres" &&
+              Field.value.map((val: string, idx: number) => (
+                <span
+                  key={idx}
+                  className={"px-3 py-1 rounded-lg text-sm " + Field.color}
+                >
+                  {val}
+                </span>
+              ))}
+
+          </div>
+        ) : (
+          <span className="InfoEntryContent w-full h-full flex justify-center items-center">
+            {Field.value}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
 
 const Card: React.FC<CardProps> = ({ CurrentGuess, todaysGame }) => {
     // You may need to adjust these variables to use the correct data from UserHistory or todaysGame

@@ -78,6 +78,22 @@
   background: var(--color-bg-info);
   color: var(--color-text-info);
   transition: background 0.3s;
+  font-weight: bold;
+}
+
+svg {
+  width: 32px;
+  height: 32px;
+}
+
+div.InfoEntryContent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row; 
+  gap: 1px;
+  justify-content: space-evenly;
+  place-items: inherit;
 }
 
 .InfoEntry.correct{
@@ -85,20 +101,39 @@
   background: linear-gradient(90deg,#23242b 0%, #242427 35%, #2f3035 100%);
   border-color: #57C785;
   border-color: radial-gradient(circle,rgba(87, 199, 133, 1) 0%, rgba(51, 255, 136, 1) 52%, rgba(87, 199, 133, 1) 100%);
-
 }
+span.correct{
+  color: #57C785;
+}
+svg.correct {
+  color: #57C785;
+}
+
+
 .InfoEntry.close{
   border-width: 2;
   background: linear-gradient(90deg,#23242b 0%, #242427 35%, #2f3035 100%);
   border-color: #c7bc57;
   border-color: radial-gradient(circle,rgba(87, 199, 133, 1) 0%, rgba(51, 255, 136, 1) 52%, rgba(87, 199, 133, 1) 100%);
-
 }
+span.close{
+  color: #c7bc57;
+}
+svg.close {
+  color: #c7bc57;
+}
+
 .InfoEntry.wrong{
   border-width: 2;
   background: linear-gradient(90deg,#23242b 0%, #242427 35%, #2f3035 100%);
   border-color: #c75757;
   border-color: radial-gradient(circle,rgba(87, 199, 133, 1) 0%, rgba(51, 255, 136, 1) 52%, rgba(87, 199, 133, 1) 100%);
+}
+span.wrong{
+  color: #c75757;
+}
+svg.wrong {
+  color: #c75757;
 }
 
 .InfoEntry:hover {
