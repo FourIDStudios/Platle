@@ -36,6 +36,13 @@
   margin: 0 auto;
 }
 
+.GameTitle {
+  text-align: center;
+  font-weight: bold;
+  font-size: 24px;
+  text-shadow: 2px 2px 5px #3b4252
+}
+
 .GameInfoCard {
   display: flex;
   justify-content: center;
@@ -64,14 +71,19 @@
   gap: 1rem;
   width: 100%;
   padding: 1rem;
+  text-transform: uppercase;
+  font-family: 'Geist';
 }
 
 .InfoEntry {
   display: flex;
   align-items: center;
   margin: 0 auto;
-  width: 175px;
-  height: 75px;
+  min-width: 175px;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 75px;
+  height: auto;
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px var(--color-shadow);
   padding: .5rem;
@@ -109,7 +121,6 @@ svg.correct {
   color: #57C785;
 }
 
-
 .InfoEntry.close{
   border-width: 2;
   background: linear-gradient(90deg,#23242b 0%, #242427 35%, #2f3035 100%);
@@ -138,6 +149,8 @@ svg.wrong {
 
 .InfoEntry:hover {
   background: var(--color-bg-info-hover);
+  transition:  0.2s ease-in-out;
+  transform: scale(1.1);
 }
 
 .Header {
@@ -210,4 +223,30 @@ svg.wrong {
 .SearchListItem .SearchListItemMatchingText {
   font-weight: bold;
   color: var(--color-text-list-match);
+}
+
+@theme inline {
+  --animate-aurora: aurora 8s ease-in-out infinite alternate;
+  @keyframes aurora {
+  0% {
+    background-position: 0% 50%;
+    transform: rotate(-5deg) scale(0.9);
+    }
+  25% {
+    background-position: 50% 100%;
+    transform: rotate(5deg) scale(1.1);
+    }
+  50% {
+    background-position: 100% 50%;
+    transform: rotate(-3deg) scale(0.95);
+    }
+  75% {
+    background-position: 50% 0%;
+    transform: rotate(3deg) scale(1.05);
+    }
+  100% {
+    background-position: 0% 50%;
+    transform: rotate(-5deg) scale(0.9);
+    }
+  }
 }

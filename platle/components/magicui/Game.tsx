@@ -7,11 +7,14 @@ import GameInfo from "@/models/GameInfo";
 import UserData from "@/models/UserData";
 import { Gamepad, RefreshCwOffIcon, User } from "lucide-react";
 import { ObjectId } from "mongodb";
-import { color, Color } from "motion";
+import { color, Color, number } from "motion";
 import { GenreEnum } from "@/models/Enums/GenreEnums";
 import { PlatformEnum } from "@/models/Enums/PlatformEnum";
 import { renderPlatform } from "@/services/platformIconService";
 import { GenreIconMap } from "@/models/Enums/GenreEnumIconMap";
+import { NumberTicker } from "./number-ticker";
+import { NeonGradientCard } from "./neon-gradient-card";
+import { AuroraText } from "./aurora-text";
 
 type CardProps = {
     CurrentGuess: GameInfo | null;
@@ -73,11 +76,11 @@ const getMatches = (Props:MatchesProps):MatchValueProps => {
         const genreMatches = guess.genres.filter(genre => game.genres.includes(genre));
         const genreNames = guess.genres
         if(genreMatches.length > 0 && genreMatches.length === game.genres.length){
-            matches.Fields.push({name: "Genres", color: 'correct', value:genreNames});
+            matches.Fields.push({name: "genres", color: 'correct', value:genreNames});
         }else if(genreMatches.length > 0){
-            matches.Fields.push({name: "Genres", color: 'close', value:genreNames});
+            matches.Fields.push({name: "genres", color: 'close', value:genreNames});
         }else{
-            matches.Fields.push({name: "Genres", color: 'wrong', value:genreNames});
+            matches.Fields.push({name: "genres", color: 'wrong', value:genreNames});
         }
     }
 
@@ -96,11 +99,11 @@ const getMatches = (Props:MatchesProps):MatchValueProps => {
 
     //Check total rating
     if(guess.total_rating === game.total_rating){
-        matches.Fields.push({name: "Rating", color: 'correct', value:guess.total_rating});
+        matches.Fields.push({name: "rating", color: 'correct', value:guess.total_rating});
     }else if(guess.total_rating > game.total_rating - 25 && guess.total_rating < game.total_rating + 25){
-        matches.Fields.push({name: "Rating", color: 'close', value:guess.total_rating });
+        matches.Fields.push({name: "rating", color: 'close', value:guess.total_rating });
     }else{
-        matches.Fields.push({name: "platforms", color: 'wrong', value:guess.total_rating });
+        matches.Fields.push({name: "rating", color: 'wrong', value:guess.total_rating });
     }
 
     //Check If Indie
@@ -138,7 +141,6 @@ const MatchModal: React.FC<FieldData> = (Field) => {
                   {GenreIconMap[genreId] ?? <span>{GenreEnum[genreId]}</span>}
                 </div>
               ))}
-
             {/* Generic array → colored chips */}
             {Field.name.toLowerCase() !== "platforms" &&
               Field.name.toLowerCase() !== "genres" &&
@@ -154,7 +156,11 @@ const MatchModal: React.FC<FieldData> = (Field) => {
           </div>
         ) : (
           <span className="InfoEntryContent w-full h-full flex justify-center items-center">
-            {Field.value}
+            {
+                Number(Field.value) > 0 &&
+                <NumberTicker value={Number(Field.value)} startValue={Number(Field.value)-20}/> ||
+                Field.value
+            }
           </span>
         )}
       </div>
@@ -181,15 +187,27 @@ const Card: React.FC<CardProps> = ({ CurrentGuess, todaysGame }) => {
          return (
         <div className="GameInfoCard">
             <div>
+                {CurrentGuess.id === todaysGame.id &&
+                <NeonGradientCard>
+                    <img src={CurrentGuess.cover} alt={CurrentGuess.name} className="CardBanner" />
+                </NeonGradientCard> ||
                 <img src={CurrentGuess.cover} alt={CurrentGuess.name} className="CardBanner" />
+                }
             </div>
             <div>
-                <h2 className="text-xl font-bold text-slate-100 text-center">{CurrentGuess.name}</h2>
+                <h2 className="GameTitle">
+                    {CurrentGuess.id === todaysGame.id &&
+                        <AuroraText>
+                            {CurrentGuess.name}
+                        </AuroraText> ||
+                        CurrentGuess.name
+                    }
+                </h2>
                 <div className="mt-2">
                     <div className="InfoGrid text-center">
                         {matches.Fields.map((Field, index) => {
                             return(
-                                <MatchModal name={Field.name} value={Field.value} color={Field.color}/>
+                                <MatchModal key={index} name={Field.name} value={Field.value} color={Field.color}/>
                             )
                         })}
                     </div>

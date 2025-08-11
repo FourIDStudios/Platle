@@ -21,7 +21,7 @@ const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
     debounceTimeout.current = setTimeout(() => {
         const filteredGames = games.filter((game: string) =>
-            game.toLowerCase().startsWith(userInput.toLowerCase())
+            game.toLowerCase().includes(userInput.toLowerCase())
         );
         setFilteredGames(
             filteredGames.slice(
